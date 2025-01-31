@@ -14,27 +14,70 @@ from typing import List, Optional, Union
 from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
 
 import QEfficient
+from QEfficient.utils.constants import QnnConstants
 from QEfficient.cloud.export import get_onnx_model_path
 from QEfficient.generation.text_generation_inference import fix_prompts, get_compilation_dims, get_input_prompts
 from QEfficient.utils import check_and_assign_cache_dir, get_qpc_dir_path, load_hf_tokenizer, qpc_exists
 from QEfficient.utils.logging_utils import logger
+from QEfficient.utils._utils import create_json, execute_command, load_json
 
-script_dir = Path(__file__).resolve().parent
-so_folder_path = script_dir / "build"
+import json
+import logging
+import logging.handlers
+import os
+import sys
+from time import perf_counter
+from typing import Dict, List, Optional
+import numpy as np
+import transformers
+import subprocess
+import logging
+import threading
+from huggingface_hub import login
 
-if so_folder_path.is_dir():
-    sys.path.append(str(so_folder_path))
-    try:
-        import InferenceSetIOBuffer  # noqa: E402
-    except ImportError:
-        logger.error("Error importing InferenceSetIOBuffer Module")
-        raise ImportError(
-            "Could not import `InfereceSetIoBuffer` executable, Please refer `examples/cpp_execution/README.md` file for building compiling cpp files."
-        )
-else:
-    raise FileNotFoundError(
-        "Please follow `examples/cpp_execution/README.md` instructions to first compile the cpp files"
-    )
+
+# FORMAT = "%(asctime)s [%(filename).22s:%(lineno).3s] | %(levelname)s | %(message)s"
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format=FORMAT,
+#     handlers=[
+#         logging.StreamHandler(),
+#         logging.FileHandler("runQNN_log.txt")
+#     ]
+# )
+# io_files = []
+RUN_KV_MODEL = str(os.path.dirname(os.path.realpath(__file__))) + "/run_kv_model"
+def read_stream(stream, prefix, output_list):
+    """
+    This API will read each line from the stream and print it
+    with an appropriate prefix to distinguish between
+    standard output and standard error.
+    Triggered by run_command_with_output()
+    Args:
+        stream (IO(str)): Output stream of command
+        prefix (str): stderr or stdout prefix
+        output_list (list) : appends the stream
+    """
+    for line in stream:
+        logging.info(f"{prefix} {line.rstrip()}")
+        output_list.append(line.rstrip())
+
+# script_dir = Path(__file__).resolve().parent
+# so_folder_path = script_dir / "build"
+
+# if so_folder_path.is_dir():
+#     sys.path.append(str(so_folder_path))
+#     try:
+#         import InferenceSetIOBuffer  # noqa: E402
+#     except ImportError:
+#         logger.error("Error importing InferenceSetIOBuffer Module")
+#         raise ImportError(
+#             "Could not import `InfereceSetIoBuffer` executable, Please refer `examples/cpp_execution/README.md` file for building compiling cpp files."
+#         )
+# else:
+#     raise FileNotFoundError(
+#         "Please follow `examples/cpp_execution/README.md` instructions to first compile the cpp files"
+#     )
 
 
 def main(
@@ -55,8 +98,6 @@ def main(
     local_model_dir: Optional[str] = None,
     cache_dir: Optional[str] = None,
     hf_token: Optional[str] = None,
-    enable_qnn: Optional[bool] = False,
-    qnn_config: Optional[str] = None,
 ) -> None:
     """
     1. Check if compiled qpc for given config already exists, if it does jump to execute, else
@@ -99,7 +140,7 @@ def main(
         raise RuntimeError("Continuous batching will be supported in future, please rerun without continuous batching.")
 
     qpc_dir_path = get_qpc_dir_path(
-        model_name, num_cores, mos, batch_size, prompt_len, ctx_len, mxfp6, mxint8, device_group, full_batch_size, enable_qnn=enable_qnn,
+        model_name, num_cores, mos, batch_size, prompt_len, ctx_len, mxfp6, mxint8, device_group, full_batch_size, enable_qnn=True,
     )
     if qpc_exists(qpc_dir_path):
         logger.info(f"Pre-compiled qpc found at {qpc_dir_path}! Executing with given prompt")
@@ -123,23 +164,107 @@ def main(
             mos=mos,
             device_group=device_group,
             full_batch_size=full_batch_size,
-            enable_qnn=enable_qnn,
-            qnn_config=qnn_config,
+            enable_qnn=True,
         )
+
+
+    context_binary_path = os.path.join(qpc_dir_path, f"{QnnConstants.CONTEXT_BIN_NAME}.bin")
 
     #########
     # Execute
     #########
-    cloud_ai_100_exec_kv_cpp(
+    execute_qnn_binary_cpp(
         tokenizer=tokenizer,
-        qpc_path=qpc_dir_path,
-        prompt_len=prompt_len,
+        qpc=context_binary_path,
         prompt=prompt,
-        device_id=device_group,
-        prompts_txt_file_path=prompts_txt_file_path,
+        batch_size=batch_size,
+        ctx_len=ctx_len,
         generation_len=generation_len,
-        full_batch_size=full_batch_size,
+        device_ids=device_group,
+        seq_len=prompt_len,
     )
+
+def execute_qnn_binary_cpp(
+    tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
+    qpc: str,
+    prompt: List[str],
+    batch_size: int,
+    ctx_len: int,
+    generation_len: Optional[int] = None,
+    seq_len: int = 128,
+    device_ids: list = [],
+    profiling: bool = False
+):
+    print(qpc)
+    manual_devices = "0"
+    # device_ids
+    if len(device_ids) > 0:
+        devices = " ".join(str(device_ids))
+        manual_devices = f"{len(device_ids)} {devices}".strip()
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+    max_id = max(tokenizer.vocab.values())
+    id_to_token = {v: k for k, v in tokenizer.vocab.items()}
+    vocab_size = len(id_to_token)
+    assert set(id_to_token) == set(range(vocab_size)), "Missing tokens"
+    with open("tokens.bin", "wb") as fp:
+        fp.write(str(vocab_size).encode())
+        fp.write(b"\0")
+        for i in range(vocab_size):
+            token = id_to_token[i]
+            if token[0] == "Ġ":
+                token = " " + token[1:]
+            fp.write(token.encode())
+            fp.write(b"\0")
+    # Read prompt, zero-th index and ctx len from session
+    prefill_seq_len: int = seq_len
+    # TODO: Placeholder code for batchsize and chunking -- NOT USED
+    # expanding prompt array to match batch size
+    if len(prompt) < batch_size:
+        prompt = prompt * -(batch_size // -len(prompt))  # Repeat prompt to required size
+    prompt = prompt[:batch_size]  # Truncate prompts to required size
+    # if user didn't provide input_len, obtain input_len from tokenizer
+    inputs = tokenizer(prompt, return_tensors="np", padding=True)
+    input_len = inputs["attention_mask"].sum(1, keepdims=False)[0]
+    padded_len = inputs["input_ids"].shape[1]
+    num_chunks = -(padded_len // -prefill_seq_len)  # ceil divide without float
+    padded_input_len = num_chunks * prefill_seq_len  # Convert to a multiple of prompt_len
+    print('num_chunks: ', num_chunks)
+    print('input_len', input_len)
+    print('padded_len', padded_len)
+    print('prompt_len(seq_len): ', prefill_seq_len)
+    print('num_chunk * prompt_len ', padded_input_len)
+    print(generation_len)
+    if generation_len is None or generation_len == 0:
+        generation_len = ctx_len - padded_input_len
+    print(generation_len)
+
+    assert generation_len > 0, "generation length should be greater than zero"
+    # TODO: for now, use single prompt
+    prompt_0: str = prompt[0]
+    # Prepare inputs for first iteration
+    inputs = tokenizer(prompt, return_tensors="np", padding="max_length", max_length=padded_input_len)
+    inputs["position_ids"] = np.where(inputs.pop("attention_mask"), np.arange(padded_input_len), -1)
+    # Need to use -1 as position_ids for invalid tokens
+    # generated_ids = np.full((batch_size, generation_len + 1), tokenizer.pad_token_id)
+    chunks = []
+    for i in range(num_chunks):
+        chunk_inputs = inputs.copy()
+        chunk_inputs["input_ids"] = inputs["input_ids"][:, i * prefill_seq_len: (i + 1) * prefill_seq_len]
+        chunk_inputs["position_ids"] = inputs["position_ids"][:, i * prefill_seq_len: (i + 1) * prefill_seq_len]
+        chunks.append(chunk_inputs)
+    os.makedirs("prefill", exist_ok=True)
+    for index, chunk_inputs in enumerate(chunks):
+        for key, value in chunk_inputs.items():
+            chunk_inputs[key].tofile(f"prefill/{key}_{index}.raw")
+    with open("prefill/input_file.txt", 'w') as fd:
+        for index, chunk_inputs in enumerate(chunks):
+            fd.write(",".join([f"prefill/{input}_{index}.raw" for input in (list(chunk_inputs.keys()))]) + '\n')
+    profiling_flag = 1 if profiling else 0
+    run_command = f"{RUN_KV_MODEL} {qpc} \"{prompt_0}\" {num_chunks} {input_len} {ctx_len} {generation_len} {profiling_flag} {manual_devices} {tokenizer.eos_token_id}"
+
+    execute_command("CPP_RUNTIME", run_command, os.getcwd())
+
 
 def cloud_ai_100_exec_kv_cpp(
     tokenizer: Union[PreTrainedTokenizer, PreTrainedTokenizerFast],
@@ -253,20 +378,6 @@ if __name__ == "__main__":
         "-v",
         action="store_true",
         help="pass to print info logs",
-    )
-    parser.add_argument(
-        "--enable_qnn",
-        "--enable-qnn",
-        action="store_true",
-        default=False,
-        help="Enables QNN. Optionally, a configuration file can be provided with [--enable_qnn CONFIG_FILE].\
-             If not provided, the default configuration will be used.\
-             Sample Config: QEfficient/cloud/compile/qnn_config.json",
-    )
-    parser.add_argument(
-        "qnn_config",
-        nargs="?",
-        type=str,
     )
 
     args = parser.parse_args()
