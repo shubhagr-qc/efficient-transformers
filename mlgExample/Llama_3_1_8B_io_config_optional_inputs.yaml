@@ -1,0 +1,593 @@
+Input Tensor Configuration:
+- Name: input_ids
+  Desired Model Parameters:
+    DataType: int64
+    Shape: (1, 128),(64, 1)
+- Name: position_ids
+  Desired Model Parameters:
+    DataType: int64
+    Shape: (1, 128),(64, 1)
+- Name: past_key.0
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.0
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.1
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.1
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.2
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.2
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.3
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.3
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.4
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.4
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.5
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.5
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.6
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.6
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.7
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.7
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.8
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.8
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.9
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.9
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.10
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.10
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.11
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.11
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.12
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.12
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.13
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.13
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.14
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.14
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.15
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.15
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.16
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.16
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.17
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.17
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.18
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.18
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.19
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.19
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.20
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.20
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.21
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.21
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.22
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.22
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.23
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.23
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.24
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.24
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.25
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.25
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.26
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.26
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.27
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.27
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.28
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.28
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.29
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.29
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.30
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.30
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_key.31
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: past_value.31
+  Desired Model Parameters:
+    DataType: uint8
+    Shape: (64, 8, 256, 128)
+    Optional: True
+- Name: batch_index
+  Desired Model Parameters:
+    DataType: int64
+    Shape: (1,1),(64,1)
+Output Tensor Configuration:
+- Name: logits
+  Desired Model Parameters:
+    DataType: float32
+- Name: past_key.0_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.0_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.1_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.1_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.2_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.2_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.3_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.3_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.4_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.4_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.5_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.5_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.6_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.6_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.7_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.7_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.8_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.8_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.9_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.9_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.10_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.10_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.11_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.11_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.12_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.12_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.13_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.13_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.14_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.14_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.15_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.15_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.16_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.16_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.17_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.17_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.18_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.18_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.19_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.19_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.20_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.20_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.21_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.21_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.22_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.22_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.23_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.23_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.24_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.24_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.25_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.25_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.26_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.26_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.27_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.27_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.28_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.28_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.29_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.29_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.30_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.30_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_key.31_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True
+- Name: past_value.31_RetainedState
+  Desired Model Parameters:
+    DataType: uint8
+    Optional: True

@@ -17,6 +17,7 @@ import transformers
 from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
 
 from QEfficient.generation.cloud_infer import QAICInferenceSession
+from QEfficient.generation.cloud_infer_qnn import QnnAicInferenceSession
 from QEfficient.utils import padding_check_and_fix
 from QEfficient.utils.logging_utils import logger
 
@@ -322,6 +323,7 @@ def cloud_ai_100_exec_kv(
     automation=False,
     prompt_to_lora_id_mapping: Optional[List[int]] = None,
     is_tlm: bool = False,
+    enable_qnn_runtime: bool = False,
 ):
     """
     This method generates output until ``eos`` or ``generation_len`` by executing the compiled ``qpc`` on ``Cloud AI 100`` Hardware cards.
@@ -372,6 +374,7 @@ def cloud_ai_100_exec_kv(
         write_io_dir=write_io_dir,
         full_batch_size=full_batch_size,
         is_tlm=is_tlm,
+        enable_qnn_runtime=enable_qnn_runtime,
     )
     if full_batch_size is None:
         exec_info = [
@@ -411,13 +414,17 @@ class QEffTextGenerationBase:
         enable_debug_logs: bool = False,
         write_io_dir: Optional[str] = None,
         is_tlm: Optional[int] = None,
+        enable_qnn_runtime: bool = False,
     ) -> None:
         self._ctx_len = ctx_len
         self._write_io_dir = write_io_dir
         self.is_tlm = is_tlm
 
         # Load QPC
-        self._session = QAICInferenceSession(qpc_path, device_id, enable_debug_logs=enable_debug_logs)
+        if enable_qnn_runtime:
+            self._session = QnnAicInferenceSession(qpc_path, device_id, enable_debug_logs=enable_debug_logs)
+        else:
+            self._session = QAICInferenceSession(qpc_path, device_id, enable_debug_logs=enable_debug_logs)
 
         # Fetch the variables from the QPC
         self._vocab_size = self._fetch_vocab_size()  # Fetch Vocab size
@@ -468,6 +475,9 @@ class QEffTextGenerationBase:
         in the session's binding index map, full_batch_size will be None.
 
         """
+        if hasattr(self._session, "full_batch_size"):
+            return self._session.full_batch_size
+
         full_batch_size = None
         if "batch_index" in self._session.binding_index_map:
             if self._session.allowed_shapes:
@@ -488,6 +498,9 @@ class QEffTextGenerationBase:
             batch_size: The batch size fetched from the session's bindings or allowed shapes.
             prefill_seq_len: The prefill sequence length fetched from the session's bindings or allowed shapes.
         """
+        if hasattr(self._session, "batch_size") and hasattr(self._session, "prefill_seq_len"):
+            return self._session.batch_size, self._session.prefill_seq_len
+
         if self._session.allowed_shapes:
             batch_size = max(
                 [x[self._session.binding_index_map["input_ids"]][1][0] for x in self._session.allowed_shapes]
@@ -508,6 +521,8 @@ class QEffTextGenerationBase:
         Returns:
             decode_seq_len: The decode sequence length fetched from the session's bindings or allowed shapes.
         """
+        if hasattr(self._session, "decode_seq_len"):
+            return self._session.decode_seq_len
         decode_seq_len = None
         if self._session.allowed_shapes:
             decode_seq_len = min(
@@ -523,6 +538,9 @@ class QEffTextGenerationBase:
         Returns:
             vocab_size: The vocabulary size fetched from the session's allowed shapes.
         """
+        if hasattr(self._session, "vocab_size"):
+            return self._session.vocab_size
+
         if self._session.allowed_shapes:
             return [x[self._session.binding_index_map["logits"]] for x in self._session.allowed_shapes][0][1][2]
 
@@ -905,9 +923,18 @@ class TextGeneration:
         enable_debug_logs: bool = False,
         write_io_dir: Optional[str] = None,
         is_tlm: bool = False,
+        enable_qnn_runtime: bool = False,
     ) -> None:
         self._qaic_model = QEffTextGenerationBase(
-            tokenizer, qpc_path, full_batch_size, ctx_len, device_id, enable_debug_logs, write_io_dir, is_tlm
+            tokenizer,
+            qpc_path,
+            full_batch_size,
+            ctx_len,
+            device_id,
+            enable_debug_logs,
+            write_io_dir,
+            is_tlm,
+            enable_qnn_runtime=enable_qnn_runtime,
         )
         self._full_batch_size = self._qaic_model.full_batch_size
         self._tokenizer = self._qaic_model.tokenizer

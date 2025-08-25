@@ -433,10 +433,8 @@ class QEffVisionEncoderForTextImageToTextModel(QEFFBaseModel):
         self.model = model.get_qeff_vision_encoder()
         self.hash_params["qeff_auto_class"] = self.__class__.__name__
 
-    def export(self, inputs, output_names, dynamic_axes, export_dir=None, offload_pt_weights=True):
-        return self._export(
-            inputs, output_names, dynamic_axes, export_dir=export_dir, offload_pt_weights=offload_pt_weights
-        )
+    def export(self, inputs, output_names, dynamic_axes, export_dir=None):
+        return self._export(inputs, output_names, dynamic_axes, export_dir=export_dir)
 
     def compile(
         self,
@@ -490,10 +488,8 @@ class QEffCausalLMForTextImageToTextModel(QEFFBaseModel):
         self.model = model.get_qeff_language_decoder()
         self.hash_params["qeff_auto_class"] = self.__class__.__name__
 
-    def export(self, inputs, output_names, dynamic_axes, export_dir=None, offload_pt_weights=True):
-        return self._export(
-            inputs, output_names, dynamic_axes, export_dir=export_dir, offload_pt_weights=offload_pt_weights
-        )
+    def export(self, inputs, output_names, dynamic_axes, export_dir=None):
+        return self._export(inputs, output_names, dynamic_axes, export_dir=export_dir)
 
     def compile(
         self,
@@ -587,18 +583,14 @@ class _QEffAutoModelForImageTextToTextDualQPC:
         inputs = self.model.get_dummy_inputs(kv_offload=True)
         dynamic_axes = self.model.get_onnx_dynamic_axes(kv_offload=True)
         output_names = self.model.get_output_names(kv_offload=True)
-
         self.vision_model.export(
             inputs["vision"],
             output_names["vision"],
             dynamic_axes["vision"],
             export_dir=export_dir,
-            offload_pt_weights=False,
-        )
-        self.lang_model.export(
-            inputs["lang"], output_names["lang"], dynamic_axes["lang"], export_dir=export_dir, offload_pt_weights=True
         )
 
+        self.lang_model.export(inputs["lang"], output_names["lang"], dynamic_axes["lang"], export_dir=export_dir)
         return self.onnx_path
 
     def compile(
@@ -1800,6 +1792,7 @@ class QEFFAutoModelForCausalLM(QEFFBaseModel):
         prompts: List[str],
         device_id: List[int] = None,
         runtime_ai100: bool = True,
+        enable_qnn_runtime: bool = False,
         **kwargs,
     ):
         """
@@ -1827,6 +1820,7 @@ class QEFFAutoModelForCausalLM(QEFFBaseModel):
                 device_id=device_id,
                 generation_len=generation_len,
                 is_tlm=self.is_tlm,
+                enable_qnn_runtime=enable_qnn_runtime,
             )
         else:
             raise NotImplementedError("Only AI_100 runtime is supported right now via generate API")
